@@ -70,7 +70,7 @@ Before running this application, make sure you have:
    VITE_BACKEND_URL=http://localhost:3001
    ```
 
-   Create a `.env` file in the `api` directory:
+   Create a `.env` file in the `backend` directory:
 
    ```env
    OPENAI_API_KEY=your_openai_api_key_here
@@ -86,7 +86,7 @@ Before running this application, make sure you have:
 1. **Start the backend server**
 
    ```bash
-   cd api
+   cd backend
    npm run dev
    ```
 
@@ -109,7 +109,7 @@ Before running this application, make sure you have:
 
 2. **Start the backend**
    ```bash
-   cd api
+   cd backend
    npm start
    ```
 
@@ -125,7 +125,7 @@ Before running this application, make sure you have:
 
 #### Backend (Railway/Render/Heroku)
 
-1. Deploy the `/api` folder to your chosen platform
+1. Deploy the `/backend` folder to your chosen platform
 2. Set environment variables:
    - `OPENAI_API_KEY`
    - `PINECONE_API_KEY`
@@ -140,10 +140,10 @@ Before running this application, make sure you have:
 
 ```
 crop-mix-intensification-chatbot/
-├── api/                          # Backend API server
+├── backend/                      # Backend API server
 │   ├── server.js                 # Express server setup
 │   ├── package.json              # Backend dependencies
-│   └── vercel.json              # Vercel API configuration
+│   └── README.md                # Backend documentation
 ├── src/                          # Frontend source code
 │   ├── components/               # React components
 │   │   ├── Chatbot.jsx          # Main chatbot interface
