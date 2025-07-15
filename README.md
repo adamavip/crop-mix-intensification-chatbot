@@ -1,45 +1,87 @@
 # Crop Mix Intensification Chatbot
 
-A React-based chatbot application that provides expert guidance on sustainable intensification practices for smallholder farmers in Zambia, based on the Sustainable Intensification Practices for Smallholder Farmers in Zambia: A Farmer's Manual developed by CIMMYT and partners.
+A comprehensive AI-powered chatbot application designed to provide expert guidance on sustainable intensification practices for smallholder farmers in Zambia. The application is built with a modern React frontend and a Node.js backend, utilizing RAG (Retrieval-Augmented Generation) technology to provide context-aware responses based on the Sustainable Intensification Practices for Smallholder Farmers in Zambia: A Farmer's Manual developed by CIMMYT and partners.
 
-## 🌾 Features
+## 🌾 Overview
 
-- **AI-Powered Chatbot**: Interactive chat interface powered by OpenAI's GPT models
-- **RAG (Retrieval-Augmented Generation)**: Context-aware responses based on the CIMMYT manual
-- **PDF Document Viewer**: Built-in PDF viewer for the SIFAZ manual
-- **Real-time Streaming**: Live streaming responses for better user experience
-- **Responsive Design**: Modern UI built with React and Tailwind CSS
-- **Document Search**: Intelligent document retrieval using Pinecone vector database
+This project consists of two main components:
+
+- **Frontend**: A modern React application with an interactive chat interface and PDF viewer
+- **Backend**: A Node.js API server that handles AI processing, document retrieval, and RAG functionality
+
+## 🏗️ Architecture
+
+```
+┌─────────────────┐    HTTP/API    ┌─────────────────┐
+│   Frontend      │ ◄────────────► │    Backend      │
+│   (React)       │                │   (Node.js)     │
+│                 │                │                 │
+│ • Chat Interface│                │ • RAG System    │
+│ • PDF Viewer    │                │ • OpenAI API    │
+│ • UI Components │                │ • Pinecone DB   │
+└─────────────────┘                └─────────────────┘
+```
 
 ## 🚀 Tech Stack
 
-### Frontend
+### Frontend Technologies
 
-- **React 19** - Modern React with latest features
+- **React 19** - Modern React with latest features and hooks
 - **Vite** - Fast build tool and development server
-- **Tailwind CSS** - Utility-first CSS framework
-- **React PDF** - PDF viewing capabilities
-- **React Markdown** - Markdown rendering for responses
+- **Tailwind CSS 4** - Utility-first CSS framework for styling
+- **React PDF** - PDF viewing and navigation capabilities
+- **React Markdown** - Markdown rendering for AI responses
+- **ESLint** - Code quality and linting
 
-### Backend
+### Backend Technologies
 
-- **Node.js** - JavaScript runtime
-- **Express.js** - Web application framework
-- **LangChain** - LLM application framework
-- **OpenAI API** - GPT models for text generation
-- **Pinecone** - Vector database for document retrieval
-- **PDF Parse** - PDF text extraction
+- **Node.js** - JavaScript runtime environment
+- **Express.js** - Web application framework for API endpoints
+- **LangChain** - LLM application framework for AI interactions
+- **OpenAI API** - GPT-4o-mini model for text generation
+- **Pinecone** - Vector database for semantic document search
+- **PDF Parse** - PDF text extraction and processing
+- **CORS** - Cross-origin resource sharing support
 
-## 📋 Prerequisites
+## 📁 Project Structure
 
-Before running this application, make sure you have:
+```
+crop-mix-intensification-chatbot/
+├── frontend/                     # React frontend application
+│   ├── src/
+│   │   ├── components/           # React components
+│   │   │   ├── Chatbot.jsx      # Main chatbot interface
+│   │   │   ├── PDFViewer.jsx    # PDF document viewer
+│   │   │   └── Sidebar.jsx      # Application sidebar
+│   │   ├── config/
+│   │   │   └── api.js           # API endpoints and functions
+│   │   ├── App.jsx              # Main application component
+│   │   └── main.jsx             # Application entry point
+│   ├── public/                  # Static assets
+│   │   ├── SIFAZ_manual.pdf    # CIMMYT manual
+│   │   ├── cimmyt-square.png   # CIMMYT logo
+│   │   └── cimmyt.svg          # CIMMYT SVG logo
+│   ├── package.json            # Frontend dependencies
+│   ├── vite.config.js          # Vite configuration
+│   ├── vercel.json             # Vercel deployment config
+│   └── .dockerignore           # Docker ignore rules
+├── backend/                     # Node.js backend API
+│   ├── server.js               # Express server and API endpoints
+│   ├── package.json            # Backend dependencies
+│   └── README.md               # Backend documentation
+└── README.md                   # This file
+```
+
+## 🛠️ Installation & Setup
+
+### Prerequisites
 
 - **Node.js** (v18 or higher)
 - **npm** or **yarn**
-- **OpenAI API Key**
-- **Pinecone API Key** and **Index Name**
+- **OpenAI API Key** - Get from [OpenAI Platform](https://platform.openai.com/)
+- **Pinecone API Key** - Get from [Pinecone Console](https://app.pinecone.io/)
 
-## 🛠️ Installation
+### Step-by-Step Setup
 
 1. **Clone the repository**
 
@@ -51,33 +93,40 @@ Before running this application, make sure you have:
 2. **Install frontend dependencies**
 
    ```bash
+   cd frontend
    npm install
    ```
 
 3. **Install backend dependencies**
 
    ```bash
-   cd api
+   cd ../backend
    npm install
-   cd ..
    ```
 
-4. **Set up environment variables**
+4. **Configure environment variables**
 
-   Create a `.env` file in the root directory:
+   Create `.env` file in the `frontend` directory:
 
    ```env
    VITE_BACKEND_URL=http://localhost:3001
    ```
 
-   Create a `.env` file in the `backend` directory:
+   Create `.env` file in the `backend` directory:
 
    ```env
    OPENAI_API_KEY=your_openai_api_key_here
    PINECONE_API_KEY=your_pinecone_api_key_here
-   PINECONE_INDEX_NAME=your_pinecone_index_name_here
    PORT=3001
    ```
+
+5. **Set up Pinecone**
+   - Create a Pinecone account at [https://www.pinecone.io/](https://www.pinecone.io/)
+   - Create a new index with these settings:
+     - Name: `sifaz-manual`
+     - Dimension: `1536` (for OpenAI embeddings)
+     - Metric: `cosine`
+   - Copy your API key to the backend `.env` file
 
 ## 🏃‍♂️ Running the Application
 
@@ -90,20 +139,26 @@ Before running this application, make sure you have:
    npm run dev
    ```
 
+   The backend will start on `http://localhost:3001`
+
 2. **Start the frontend development server** (in a new terminal)
 
    ```bash
+   cd frontend
    npm run dev
    ```
 
-3. **Open your browser**
-   Navigate to `http://localhost:5173` to access the application.
+   The frontend will start on `http://localhost:5173`
+
+3. **Access the application**
+   Open your browser and navigate to `http://localhost:5173`
 
 ### Production Build
 
 1. **Build the frontend**
 
    ```bash
+   cd frontend
    npm run build
    ```
 
@@ -113,123 +168,201 @@ Before running this application, make sure you have:
    npm start
    ```
 
+## 🔧 Configuration Details
+
+### Frontend Configuration
+
+The frontend uses Vite for build tooling and development. Key configuration files:
+
+- **`vite.config.js`**: Vite configuration with React and Tailwind plugins
+- **`src/config/api.js`**: API endpoint configuration and functions
+- **`vercel.json`**: Deployment configuration for Vercel
+
+### Backend Configuration
+
+The backend is an Express.js server with the following key features:
+
+- **RAG System**: Retrieval-Augmented Generation for context-aware responses
+- **PDF Processing**: Automatic processing of the SIFAZ manual
+- **Vector Storage**: Pinecone integration for semantic search
+- **Streaming Responses**: Real-time response streaming for better UX
+
+### Environment Variables
+
+#### Frontend (.env)
+
+```env
+VITE_BACKEND_URL=http://localhost:3001  # Backend API URL
+```
+
+#### Backend (.env)
+
+```env
+OPENAI_API_KEY=your_openai_api_key      # OpenAI API key
+PINECONE_API_KEY=your_pinecone_key      # Pinecone API key
+PORT=3001                               # Server port
+```
+
 ## 🌐 Deployment
 
-### Option 1: Separate Deployments (Recommended)
+### Frontend Deployment (Vercel)
 
-#### Frontend (Vercel)
+1. **Install Vercel CLI**
 
-1. Install Vercel CLI: `npm install -g vercel`
-2. Deploy: `vercel`
-3. Set environment variable `VITE_BACKEND_URL` to your backend URL
+   ```bash
+   npm install -g vercel
+   ```
 
-#### Backend (Railway/Render/Heroku)
+2. **Deploy from frontend directory**
 
-1. Deploy the `/backend` folder to your chosen platform
-2. Set environment variables:
-   - `OPENAI_API_KEY`
-   - `PINECONE_API_KEY`
-   - `PINECONE_INDEX_NAME`
+   ```bash
+   cd frontend
+   vercel
+   ```
 
-### Option 2: Monorepo Deployment (Vercel)
+3. **Set environment variables in Vercel dashboard**
+   - `VITE_BACKEND_URL`: Your backend deployment URL
 
-1. Deploy the entire project: `vercel`
-2. Set all environment variables in Vercel dashboard
+### Backend Deployment
 
-## 📁 Project Structure
+#### Option 1: Railway
 
-```
-crop-mix-intensification-chatbot/
-├── backend/                      # Backend API server
-│   ├── server.js                 # Express server setup
-│   ├── package.json              # Backend dependencies
-│   └── README.md                # Backend documentation
-├── src/                          # Frontend source code
-│   ├── components/               # React components
-│   │   ├── Chatbot.jsx          # Main chatbot interface
-│   │   ├── PDFViewer.jsx        # PDF document viewer
-│   │   └── Sidebar.jsx          # Application sidebar
-│   ├── config/                   # Configuration files
-│   │   └── api.js               # API endpoints and functions
-│   ├── App.jsx                   # Main application component
-│   └── main.jsx                  # Application entry point
-├── public/                       # Static assets
-│   ├── SIFAZ_manual.pdf         # CIMMYT manual
-│   └── cimmyt.svg               # CIMMYT logo
-├── package.json                  # Frontend dependencies
-├── vite.config.js               # Vite configuration
-├── vercel.json                  # Vercel deployment config
-└── README.md                    # This file
-```
+1. Connect your GitHub repository to Railway
+2. Set the root directory to `/backend`
+3. Configure environment variables in Railway dashboard
 
-## 🔧 Configuration
+#### Option 2: Render
 
-### API Configuration
+1. Create a new Web Service in Render
+2. Point to your GitHub repository
+3. Set build command: `npm install`
+4. Set start command: `npm start`
+5. Configure environment variables
 
-The application uses environment variables for configuration:
+#### Option 3: Heroku
 
-- `VITE_BACKEND_URL`: Backend API URL (default: `http://localhost:3001`)
-- `OPENAI_API_KEY`: OpenAI API key for GPT models
-- `PINECONE_API_KEY`: Pinecone API key for vector database
-- `PINECONE_INDEX_NAME`: Pinecone index name for document storage
+1. Create a new Heroku app
+2. Set buildpacks for Node.js
+3. Deploy using Heroku CLI or GitHub integration
+4. Configure environment variables
 
-### RAG System
+## 🤖 Features & Capabilities
 
-The RAG (Retrieval-Augmented Generation) system:
+### Chatbot Features
 
-1. Initializes with the SIFAZ manual content
-2. Stores document embeddings in Pinecone
-3. Retrieves relevant documents for user queries
-4. Generates context-aware responses using OpenAI
+- **Interactive Chat Interface**: Real-time conversation with AI
+- **Streaming Responses**: Live response streaming for better UX
+- **Context Awareness**: RAG-powered responses based on manual content
+- **Source Citations**: Page number references for responses
+- **Conversation History**: Save and manage chat sessions
 
-## 🤖 Chatbot Capabilities
+### PDF Viewer Features
 
-The chatbot can help with:
+- **Built-in PDF Viewer**: View the complete SIFAZ manual
+- **Page Navigation**: Jump to specific pages
+- **Source Linking**: Automatic navigation to cited pages
+- **Responsive Design**: Works on desktop and mobile
 
-- **Crop Selection**: Guidance on choosing appropriate crops
-- **Planting Techniques**: Strip intercropping, doubled-up legumes
-- **Conservation Agriculture**: Soil health and sustainability practices
-- **Climate Resilience**: Adaptation strategies for changing weather
-- **Input Management**: Fertilizer and seed recommendations
-- **Timing**: Planting calendars and seasonal considerations
+### RAG System Features
+
+- **Document Processing**: Automatic PDF text extraction
+- **Vector Embeddings**: Semantic search using OpenAI embeddings
+- **Relevant Retrieval**: Context-aware document retrieval
+- **Response Generation**: AI-powered response generation
 
 ## 📚 Manual Integration
 
-The application integrates with the "Sustainable Intensification Practices for Smallholder Farmers in Zambia: A Farmer's Manual" developed by CIMMYT and partners. Users can:
+The application integrates with the "Sustainable Intensification Practices for Smallholder Farmers in Zambia: A Farmer's Manual" developed by CIMMYT and partners. The RAG system:
 
-- View the complete manual in the built-in PDF viewer
-- Ask questions about specific practices
-- Get context-aware responses based on manual content
+1. **Processes the PDF**: Extracts and chunks the manual content
+2. **Creates Embeddings**: Generates vector embeddings for semantic search
+3. **Stores in Pinecone**: Indexes content for fast retrieval
+4. **Retrieves Context**: Finds relevant sections for user queries
+5. **Generates Responses**: Creates context-aware AI responses
 
-## 🧪 Testing
+## 🧪 Testing & Quality Assurance
 
-Run the linter to check code quality:
+### Frontend Testing
 
 ```bash
-npm run lint
+cd frontend
+npm run lint          # Run ESLint
+npm run build         # Test production build
+npm run preview       # Preview production build
 ```
 
-## 📝 Scripts
+### Backend Testing
+
+```bash
+cd backend
+npm start             # Test production server
+```
+
+### API Testing
+
+Test the backend endpoints:
+
+- `GET /api/health` - Health check
+- `GET /api/rag-status` - RAG system status
+- `POST /api/init-rag` - Initialize RAG system
+- `POST /api/get-relevant-docs` - Get relevant documents
+- `POST /api/generate-response` - Generate AI response
+
+## 📝 Available Scripts
 
 ### Frontend Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run lint         # Run ESLint
+```
 
 ### Backend Scripts
 
-- `npm start` - Start production server
-- `npm run dev` - Start development server with nodemon
+```bash
+npm start            # Start production server
+npm run dev          # Start development server with nodemon
+```
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+1. **PDF not found**
+
+   - Ensure `SIFAZ_manual.pdf` is in `frontend/public/` directory
+   - Check file permissions
+
+2. **API key errors**
+
+   - Verify OpenAI and Pinecone API keys in backend `.env`
+   - Check API key permissions and quotas
+
+3. **Pinecone index errors**
+
+   - Ensure Pinecone index is created with dimension 1536
+   - Verify index name matches configuration
+
+4. **CORS errors**
+
+   - Check `VITE_BACKEND_URL` in frontend `.env`
+   - Verify backend CORS configuration
+
+5. **Port conflicts**
+   - Change PORT in backend `.env` if 3001 is in use
+   - Update `VITE_BACKEND_URL` accordingly
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature-name`
-3. Commit your changes: `git commit -am 'Add feature'`
-4. Push to the branch: `git push origin feature-name`
-5. Submit a pull request
+3. Make your changes
+4. Test thoroughly (frontend and backend)
+5. Commit your changes: `git commit -am 'Add feature'`
+6. Push to the branch: `git push origin feature-name`
+7. Submit a pull request
 
 ## 📄 License
 
@@ -238,22 +371,25 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🙏 Acknowledgments
 
 - **CIMMYT** for developing the Sustainable Intensification Practices manual
-- **OpenAI** for providing the GPT models
+- **OpenAI** for providing the GPT models and embeddings
 - **Pinecone** for vector database services
 - **LangChain** for the LLM application framework
+- **React** and **Vite** communities for excellent development tools
 
 ## 📞 Support
 
 For support or questions about the application:
 
-- Check the documentation in the `/docs` folder
+- Check the documentation in both frontend and backend README files
 - Review the CIMMYT manual for farming-specific questions
 - Contact the development team for technical issues
 
 ## 🔄 Version History
 
 - **v1.0.0** - Initial release with RAG-powered chatbot
-- Features: PDF viewer, streaming responses, responsive design
+  - Frontend: React 19, Vite, Tailwind CSS
+  - Backend: Node.js, Express, LangChain, Pinecone
+  - Features: PDF viewer, streaming responses, responsive design
 
 ---
 
