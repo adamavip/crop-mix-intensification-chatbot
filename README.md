@@ -205,6 +205,11 @@ PORT=3001                               # Server port
 
 ## 🌐 Deployment
 
+This project uses a multi-platform deployment strategy:
+
+- **Frontend**: Deployed on Vercel for optimal performance and global CDN
+- **Backend**: Deployed on Render for reliable serverless API hosting
+
 ### Frontend Deployment (Vercel)
 
 1. **Install Vercel CLI**
@@ -221,30 +226,82 @@ PORT=3001                               # Server port
    ```
 
 3. **Set environment variables in Vercel dashboard**
-   - `VITE_BACKEND_URL`: Your backend deployment URL
 
-### Backend Deployment
+   - `VITE_BACKEND_URL`: Your Render backend deployment URL (e.g., `https://your-app.onrender.com`)
 
-#### Option 1: Railway
+4. **Configure custom domain (optional)**
+   - Add your domain in Vercel dashboard
+   - Update DNS settings as instructed
 
-1. Connect your GitHub repository to Railway
-2. Set the root directory to `/backend`
-3. Configure environment variables in Railway dashboard
+### Backend Deployment (Render)
 
-#### Option 2: Render
+1. **Create a new Web Service in Render**
 
-1. Create a new Web Service in Render
-2. Point to your GitHub repository
-3. Set build command: `npm install`
-4. Set start command: `npm start`
-5. Configure environment variables
+   - Go to [render.com](https://render.com) and create an account
+   - Click "New +" and select "Web Service"
+   - Connect your GitHub repository
 
-#### Option 3: Heroku
+2. **Configure the service**
 
-1. Create a new Heroku app
-2. Set buildpacks for Node.js
-3. Deploy using Heroku CLI or GitHub integration
-4. Configure environment variables
+   - **Name**: `sifaz-backend` (or your preferred name)
+   - **Root Directory**: `backend`
+   - **Runtime**: `Node`
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+
+3. **Set environment variables in Render dashboard**
+
+   - `OPENAI_API_KEY`: Your OpenAI API key
+   - `PINECONE_API_KEY`: Your Pinecone API key
+   - `NODE_ENV`: `production`
+   - `PORT`: Leave empty (Render auto-assigns)
+
+4. **Deploy**
+
+   - Click "Create Web Service"
+   - Render will automatically build and deploy your backend
+   - Note the deployment URL (e.g., `https://your-app.onrender.com`)
+
+5. **Update frontend configuration**
+   - Go to your Vercel dashboard
+   - Update `VITE_BACKEND_URL` with your Render backend URL
+
+### Deployment Architecture
+
+```
+┌─────────────────┐    API Calls    ┌─────────────────┐
+│   Frontend      │ ──────────────► │    Backend      │
+│   (Vercel)      │                 │   (Render)      │
+│                 │                 │                 │
+│ • React App     │                 │ • Express API   │
+│ • Static Assets │                 │ • RAG System    │
+│ • Global CDN    │                 │ • Pinecone DB   │
+└─────────────────┘                 └─────────────────┘
+```
+
+### Environment Variables Summary
+
+#### Frontend (Vercel)
+
+```env
+VITE_BACKEND_URL=https://your-app.onrender.com
+```
+
+#### Backend (Render)
+
+```env
+OPENAI_API_KEY=your_openai_api_key
+PINECONE_API_KEY=your_pinecone_api_key
+NODE_ENV=production
+```
+
+### Post-Deployment Verification
+
+1. **Test backend health**: `GET https://your-app.onrender.com/api/health`
+2. **Test RAG status**: `GET https://your-app.onrender.com/api/rag-status`
+3. **Test PDF access**: `GET https://your-app.onrender.com/api/debug-pdf`
+4. **Test frontend**: Visit your Vercel deployment URL
+5. **Test full flow**: Send a query through the chatbot interface
 
 ## 🤖 Features & Capabilities
 
@@ -330,29 +387,71 @@ npm run dev          # Start development server with nodemon
 
 ### Common Issues
 
-1. **PDF not found**
+1. **PDF not found in production**
 
-   - Ensure `SIFAZ_manual.pdf` is in `frontend/public/` directory
-   - Check file permissions
+   - Ensure `SIFAZ_manual.pdf` is in `backend/public/` directory
+   - Verify the file is committed to Git (not excluded by `.gitignore`)
+   - Check Render logs for file access errors
 
 2. **API key errors**
 
-   - Verify OpenAI and Pinecone API keys in backend `.env`
+   - Verify OpenAI and Pinecone API keys in Render environment variables
    - Check API key permissions and quotas
+   - Ensure keys are set in Render dashboard, not in `.env` files
 
 3. **Pinecone index errors**
 
    - Ensure Pinecone index is created with dimension 1536
-   - Verify index name matches configuration
+   - Verify index name matches configuration (`sifaz-manual`)
+   - Check Pinecone dashboard for index status
 
 4. **CORS errors**
 
-   - Check `VITE_BACKEND_URL` in frontend `.env`
-   - Verify backend CORS configuration
+   - Check `VITE_BACKEND_URL` in Vercel environment variables
+   - Verify the URL points to your Render backend
+   - Ensure backend CORS configuration allows Vercel domain
 
-5. **Port conflicts**
-   - Change PORT in backend `.env` if 3001 is in use
-   - Update `VITE_BACKEND_URL` accordingly
+5. **RAG not initializing in production**
+
+   - Test PDF access: `GET /api/debug-pdf`
+   - Test RAG status: `GET /api/rag-status`
+   - Check Render logs for initialization errors
+   - Verify environment variables are set correctly
+
+6. **Frontend can't connect to backend**
+
+   - Verify `VITE_BACKEND_URL` is set correctly in Vercel
+   - Test backend health: `GET /api/health`
+   - Check if Render service is running
+
+### Debug Endpoints
+
+Use these endpoints to troubleshoot production issues:
+
+- `GET /api/health` - Basic health check
+- `GET /api/rag-status` - RAG system status
+- `GET /api/debug-pdf` - Test PDF file access
+- `GET /api/debug-env` - Check environment variables (be careful in production)
+- `POST /api/init-rag` - Manually initialize RAG system
+
+### Render-Specific Issues
+
+1. **Service not starting**
+
+   - Check build logs in Render dashboard
+   - Verify `package.json` scripts are correct
+   - Ensure all dependencies are in `package.json`
+
+2. **Memory/timeout issues**
+
+   - Check Render logs for memory limit errors
+   - Consider upgrading Render plan if needed
+   - Optimize PDF processing for production
+
+3. **Environment variables not working**
+   - Verify variables are set in Render dashboard
+   - Check variable names match exactly
+   - Redeploy after changing environment variables
 
 ## 🤝 Contributing
 
