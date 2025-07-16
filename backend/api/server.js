@@ -52,7 +52,10 @@ const loadAndProcessPDF = async () => {
     console.log("Starting PDF processing...");
 
     // Load the PDF file using Node.js file system
-    const pdfPath = path.join(__dirname, "../frontend/public/SIFAZ_manual.pdf");
+    const pdfPath = path.join(
+      __dirname,
+      "../../frontend/public/SIFAZ_manual.pdf"
+    );
     const loader = new PDFLoader(pdfPath);
     const docs = await loader.load();
     console.log(`Loaded ${docs.length} pages from PDF`);

@@ -2,14 +2,14 @@
   "name": "sifaz-api",
   "version": "1.0.0",
   "description": "API server for SIFAZ chatbot with RAG functionality",
-  "main": "server.js",
+  "main": "api/server.js",
   "type": "module",
   "engines": {
     "node": ">=18.0.0"
   },
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node api/server.js",
+    "dev": "nodemon api/server.js"
   },
   "dependencies": {
     "@langchain/community": "^0.2.33",
