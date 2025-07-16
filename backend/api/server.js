@@ -301,12 +301,60 @@ app.get("/api/rag-status", (req, res) => {
   res.json({
     isReady: isInitialized,
     hasVectorStore: vectorStore !== null,
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || "development",
   });
+});
+
+// Debug endpoint to test PDF loading
+app.get("/api/debug-pdf", async (req, res) => {
+  try {
+    const pdfPath = path.join(__dirname, "../public/SIFAZ_manual.pdf");
+    const fs = await import("fs");
+
+    if (fs.existsSync(pdfPath)) {
+      const stats = fs.statSync(pdfPath);
+      res.json({
+        success: true,
+        pdfPath: pdfPath,
+        fileSize: stats.size,
+        exists: true,
+        message: "PDF file found",
+      });
+    } else {
+      res.json({
+        success: false,
+        pdfPath: pdfPath,
+        exists: false,
+        message: "PDF file not found",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      message: "Error checking PDF file",
+    });
+  }
 });
 
 // Health check
 app.get("/api/health", (req, res) => {
-  res.json({ status: "OK", timestamp: new Date().toISOString() });
+  res.json({
+    status: "OK",
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || "development",
+  });
+});
+
+// Debug environment variables (be careful with this in production)
+app.get("/api/debug-env", (req, res) => {
+  res.json({
+    hasOpenAIKey: !!process.env.OPENAI_API_KEY,
+    hasPineconeKey: !!process.env.PINECONE_API_KEY,
+    nodeEnv: process.env.NODE_ENV || "development",
+    timestamp: new Date().toISOString(),
+  });
 });
 
 app.listen(PORT, () => {
