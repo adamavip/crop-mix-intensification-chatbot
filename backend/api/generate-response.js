@@ -8,22 +8,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 
-export default async function handler(req, res) {
-    // Add CORS headers
-    res.setHeader("Access-Control-Allow-Origin", "https://sifaz-chatbot.vercel.app");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  
-    // Handle preflight request
-    if (req.method === "OPTIONS") {
-      return res.status(200).end();
-    }
-  
-    // Your real logic
-    res.status(200).json({ isReady: true });
-  }
-  
-
 // Configure dotenv
 dotenv.config();
 
@@ -168,7 +152,10 @@ const getRelevantDocumentsWithPages = async (query) => {
 
 export default async function handler(req, res) {
   // Enable CORS
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://sifaz-chatbot.vercel.app"
+  );
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
