@@ -51,22 +51,6 @@ const loadAndProcessPDF = async () => {
   try {
     console.log("Starting PDF processing...");
 
-    // Load the PDF file using Node.js file system
-    const pdfPath = path.join(__dirname, "../public/SIFAZ_manual.pdf");
-    const loader = new PDFLoader(pdfPath);
-    const docs = await loader.load();
-    console.log(`Loaded ${docs.length} pages from PDF`);
-    console.log(`Metadata: ${JSON.stringify(docs[0].metadata)}`);
-
-    // Split documents into chunks
-    const textSplitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 1000,
-      chunkOverlap: 200,
-    });
-
-    const splitDocs = await textSplitter.splitDocuments(docs);
-    console.log(`Split into ${splitDocs.length} chunks`);
-
     // Get or create Pinecone index
     const indexName = "sifaz-manual";
     const listResponse = await pinecone.listIndexes();
@@ -81,12 +65,28 @@ const loadAndProcessPDF = async () => {
       index = pinecone.Index(indexName);
 
       // Rehydrate a LangChain vector store from the existing Pinecone index
+      console.log("Loading vector store from existing index...");
       vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
         pineconeIndex: index,
         namespace: "default",
       });
       console.log("✅ Fetched existing vector store");
     } else {
+      // Load the PDF file using Node.js file system
+      const pdfPath = path.join(__dirname, "../public/SIFAZ_manual.pdf");
+      const loader = new PDFLoader(pdfPath);
+      const docs = await loader.load();
+      console.log(`Loaded ${docs.length} pages from PDF`);
+      console.log(`Metadata: ${JSON.stringify(docs[0].metadata)}`);
+
+      // Split documents into chunks
+      const textSplitter = new RecursiveCharacterTextSplitter({
+        chunkSize: 1000,
+        chunkOverlap: 200,
+      });
+
+      const splitDocs = await textSplitter.splitDocuments(docs);
+      console.log(`Split into ${splitDocs.length} chunks`);
       console.log(`Creating index "${indexName}" and upserting embeddings…`);
 
       // Create the Pinecone index
